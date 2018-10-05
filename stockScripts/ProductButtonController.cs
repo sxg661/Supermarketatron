@@ -4,16 +4,27 @@ using UnityEngine;
 
 public class ProductButtonController : MonoBehaviour {
 
+    int indexStart = 0;
 
+    public void moveToNextPage()
+    {
+        if (indexStart + 7 < (StockShop.numOfProducts - 1))
+        {
+            indexStart += 8;
+        }
+    }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void moveToPreviousPage()
+    {
+        if (indexStart != 0)
+        {
+            indexStart -= 8;
+        }
+    }
+
+    public int getMyProdId(int buttonId)
+    {
+        return indexStart + buttonId;
+    }
 }
 

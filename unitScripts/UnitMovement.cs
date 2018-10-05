@@ -128,4 +128,21 @@ public class UnitMovement : UnitBehaviour {
         return false;
     }
 
+    private new void OnMouseOver()
+    {
+        mouseHover = true;
+        unitAnimScript.hover(true);
+        if (!objectGrabbed && !pending)
+        {
+            stockButton.transform.position = new Vector3(bleftx + (3 * myXsize) / 4, blefty + (3 * myYsize) / 4, 20);
+        }
+    }
+
+    private new void OnMouseExit()
+    {
+        mouseHover = false;
+        unitAnimScript.hover(false);
+        stockButton.transform.position = new Vector3(-100, -100, -100);
+    }
+
 }

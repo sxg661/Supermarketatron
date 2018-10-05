@@ -4,7 +4,27 @@ using UnityEngine;
 
 public class StockShop : MonoBehaviour {
 
+    public static List<string> prodNames = new List<string>();
+
+    public static int numOfProducts = 0;
+
     public static Dictionary<string, Item> products = fillStockShop();
+
+    public static Optional<Item> getProd(int id)
+    {
+        if (id < numOfProducts)
+        {
+            return Optional<Item>.of(products[ prodNames[id] ]);
+        }
+        return Optional<Item>.empty();
+    }
+
+    private static void addProd(string name, Item product, Dictionary<string, Item> prods)
+    {
+        prods[name] = product;
+        prodNames.Add(name);
+        numOfProducts++;
+    }
 
     public static Dictionary<string, Item> fillStockShop()
     {
@@ -17,7 +37,7 @@ public class StockShop : MonoBehaviour {
         egg.addTag(Item.Tag.VEGETERIAN);
         egg.addTag(Item.Tag.HEALTHY);
         egg.addTag(Item.Tag.CHEAP);
-        products.Add("egg", egg);
+        addProd("egg", egg, prods);
 
         //Cake
         Item cake = new Item(Item.Type.FOOD, "cake", 1.5, 5.0);
@@ -27,7 +47,7 @@ public class StockShop : MonoBehaviour {
         cake.addTag(Item.Tag.VEGETERIAN);
         cake.addTag(Item.Tag.FANCY);
         cake.addTag(Item.Tag.FUN);
-        products.Add("cake", cake);
+        addProd("cake", cake, prods);
 
         //Banana
         Item banana = new Item(Item.Type.FOOD, "banana", 0.1, 0.3);
@@ -37,7 +57,7 @@ public class StockShop : MonoBehaviour {
         banana.addTag(Item.Tag.EVERYDAY);
         banana.addTag(Item.Tag.CHEAP);
         banana.addTag(Item.Tag.CONVINIENT);
-        products.Add("banana", banana);
+        addProd("banana", banana, prods);
 
         //Sausage
         Item sausage = new Item(Item.Type.FOOD, "sausage", 0.75, 1.5);
@@ -46,22 +66,22 @@ public class StockShop : MonoBehaviour {
         sausage.addTag(Item.Tag.CONVINIENT);
         sausage.addTag(Item.Tag.UNHEALTHY);
         sausage.addTag(Item.Tag.TACKY);
-        products.Add("sausage", sausage);
+        addProd("sausage", sausage, prods);
 
-        //BALL
+        //Ball
         Item ball = new Item(Item.Type.KIDS, "ball", 0.5, 1.5);
         ball.descrip = "A bouncy ball in lots of fun colours!";
         ball.addTag(Item.Tag.TACKY);
         ball.addTag(Item.Tag.CHEAP);
         ball.addTag(Item.Tag.FUN);
-        products.Add("ball", ball);
+        addProd("ball", ball, prods);
 
         //Candle
         Item candle = new Item(Item.Type.HOUSEHOLD, "candle", 7.0, 15.0);
         candle.descrip = "A high quality candle with the tropical scents of the Carribean";
         candle.addTag(Item.Tag.FANCY);
         candle.addTag(Item.Tag.EXOTIC);
-        products.Add("candle", candle);
+        addProd("candle", candle, prods);
 
         //Fizzy Pop
         Item fizzyPop = new Item(Item.Type.HOUSEHOLD, "fizzy pop", 0.1, 0.5);
@@ -71,9 +91,23 @@ public class StockShop : MonoBehaviour {
         candle.addTag(Item.Tag.SWEET);
         candle.addTag(Item.Tag.CHEAP);
         candle.addTag(Item.Tag.TACKY);
-        products.Add("fizzy pop", fizzyPop);
+        addProd("fizzy pop", fizzyPop, prods);
 
+        //Nuts
+        Item nuts = new Item(Item.Type.FOOD, "nuts", 0.5, 1.0);
+        nuts.descrip = "Careful of choking hazards";
+        nuts.addTag(Item.Tag.HEALTHY);
+        nuts.addTag(Item.Tag.VEGETERIAN);
+        addProd("nuts", nuts, prods);
 
+        //Pizza
+        Item pizza = new Item(Item.Type.FOOD, "pizza", 0.7, 1.5);
+        pizza.descrip = "A hawaiian pizza";
+        pizza.addTag(Item.Tag.CONVINIENT);
+        pizza.addTag(Item.Tag.TACKY);
+        pizza.addTag(Item.Tag.UNHEALTHY);
+        pizza.addTag(Item.Tag.FUN);
+        addProd("pizza", pizza, prods);
 
         return prods;
     }

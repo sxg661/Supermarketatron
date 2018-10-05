@@ -27,6 +27,16 @@ public class ButtonController : MonoBehaviour {
         SceneManager.LoadScene("StartMenu");
     }
 
+    public void startLevel()
+    {
+        SceneManager.LoadScene("Level");
+    }
+
+    public void shop()
+    {
+        SceneManager.LoadScene("StockShop");
+    }
+
     public void stockMenu()
     {
         if (!BuildController.displayingStockMenu())

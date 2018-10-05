@@ -6,16 +6,11 @@ public class UnitPrefabs : MonoBehaviour {
 
     public GameObject shelfPrefab;
 
+    public GameObject staticShelfPrefab;
+
+    public GameObject counterPrefab;
+
     public GameObject stockPrefab;
 
-    public GameObject getShelfPrefab()
-    {
-        return shelfPrefab;
-    }
-
-    public GameObject getStockPrefab()
-    {
-        return stockPrefab;
-    }
     
 }

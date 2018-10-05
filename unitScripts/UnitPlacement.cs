@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UnitPlacement : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class UnitPlacement : MonoBehaviour
     public UnitPrefabs unitPrefabs;
 
     private static int nextID = 0;
+
+    private string mySceneName;
 
     private static bool unitsFrozen = false;
 
@@ -29,8 +32,12 @@ public class UnitPlacement : MonoBehaviour
         return nextID++;
     }
 
-    public void initialiseUnits()
+    public void initialiseUnits(bool staticUnit)
     {
+        int[] coCoords = TileGrid.topLeftCorner();
+        instantiateCounterUnit(coCoords[0] + 1, coCoords[1] - 2);
+        
+
         for(int x = TileGrid.GRIDRANGEX[0]; x <= TileGrid.GRIDRANGEX[1]; x++)
         {
             for (int y = TileGrid.GRIDRANGEY[0]; y <= TileGrid.GRIDRANGEY[1]; y++)
@@ -43,7 +50,7 @@ public class UnitPlacement : MonoBehaviour
                         switch(currentTile.type)
                         {
                             case UnitInfo.unitType.SHELF:
-                                instantiateShelfUnit(x, y, false, currentTile.forward);
+                                instantiateShelfUnit(x, y, false, currentTile.forward, staticUnit);
                                 break;
                         }
                     }
@@ -52,30 +59,67 @@ public class UnitPlacement : MonoBehaviour
         }
     }
 
-    public void instantiateShelfUnit(int blx, int bly, bool pending, bool forward)
+    public void instantiateShelfUnit(int blx, int bly, bool pending, bool forward, bool staticUnit)
 	{
         Unit unit = gameObject.AddComponent<Unit>();
 
         //for now I only have shelves, but I'll change this when I get there
-        unit.giveType(UnitInfo.unitType.SHELF, unitPrefabs);
+        unit.giveType(UnitInfo.unitType.SHELF, unitPrefabs, staticUnit);
         int id = getNewID();
-        unit.initMovingComponents(id);
+        if (staticUnit)
+        {
+            unit.initStaticComponents(id);
+        }
+        else
+        {
+            unit.initMovingComponents(id);
+        }
+            
+        //HERE
         unit.givePosition(blx, bly, forward);
 
         //we add this to our dictionary so we can destroy it later if need be
         units[id] = unit;
         //maybe need to change how I do this too, so can generalise function for all unit types
         if(!pending)
-            addShelfUnit(blx, bly, id, Unit.SHELFFLOORDIMENSIONS[0], Unit.SHELFFLOORDIMENSIONS[1], forward);
+            addUnit(
+                blx, bly, id, Unit.SHELFFLOORDIMENSIONS[0], Unit.SHELFFLOORDIMENSIONS[1], 
+                forward, UnitInfo.unitType.SHELF);
 
         unit.render(pending);
 
     }
 
+    public void instantiateCounterUnit(int blx, int bly)
+    {
+        //instantiate unit
+        Unit unit = gameObject.AddComponent<Unit>();
+        unit.giveType(UnitInfo.unitType.COUNTER, unitPrefabs, true);
+        int id = getNewID();
+        unit.initStaticComponents(id);
+        unit.givePosition(blx, bly, true);
+
+        //add to the dictionary
+        units[id] = unit;
+        //now do the rest
+        addUnit(
+            blx, bly, id, Unit.COUNTERDIMENSIONS[0], Unit.COUNTERDIMENSIONS[1], 
+            true, UnitInfo.unitType.COUNTER);
+        unit.render(false);
+      
+    }
+
     public void Start()
     {
         unitsFrozen = false;
-        initialiseUnits();
+        mySceneName = SceneManager.GetActiveScene().name;
+
+        //units only move in the build scene
+        if (mySceneName == "BuildScene")
+        {
+            initialiseUnits(false);
+        }
+        else initialiseUnits(true);
     }
 
 
@@ -90,7 +134,7 @@ public class UnitPlacement : MonoBehaviour
     /// </summary>
     /// <param name="blx">Bottom left coordiante of shelf</param>
     /// <param name="bly">Bottom right coordinate of shelf</param>
-    public static void addShelfUnit(int blx, int bly, int myID, float xsize, float ysize, bool forward)
+    public static void addUnit(int blx, int bly, int myID, float xsize, float ysize, bool forward, UnitInfo.unitType type)
     {
 
 
@@ -99,7 +143,7 @@ public class UnitPlacement : MonoBehaviour
             for(int y = 0; y < ysize; y++)
             {
                 tiles[TileGrid.getKey(blx + x, bly + y)] = 
-                    new UnitInfo(UnitInfo.unitType.SHELF, myID, x, y, forward);
+                    new UnitInfo(type, myID, x, y, forward);
             }
         }
          
@@ -110,7 +154,7 @@ public class UnitPlacement : MonoBehaviour
     /// </summary>
     /// <param name="blx">Bottom left coordiante of shelf</param>
     /// <param name="bly">Bottom right coordinate of shelf</param>
-    public static void removeShelfUnit(int blx, int bly, float xsize, float ysize)
+    public static void removeUnit(int blx, int bly, float xsize, float ysize)
     {
         //Again, no need for bound checking as it is done for us by this point
 

@@ -6,6 +6,7 @@ public class Unit : MonoBehaviour {
 
     public static int[] SHELFDIMENSIONS = new int[] { 2, 2 };
     public static int[] SHELFFLOORDIMENSIONS = new int[] { 2, 1 };
+    public static int[] COUNTERDIMENSIONS = new int[] { 4, 2 };
 
     private GameObject myPrefab;
     private GameObject stockPrefab;
@@ -23,16 +24,29 @@ public class Unit : MonoBehaviour {
     public ButtonController buttonController;
 
 
-    public void giveType(UnitInfo.unitType type, UnitPrefabs prefabs)
+    public void giveType(UnitInfo.unitType type, UnitPrefabs prefabs, bool staticUnit)
     {
-        switch (type)
+        myType = type;
+        switch (myType)
         {
             case (UnitInfo.unitType.SHELF):
                 Debug.Log(type.ToString());
-                myPrefab = prefabs.getShelfPrefab();
-                stockPrefab = prefabs.getStockPrefab();
+                if (staticUnit)
+                {
+                    myPrefab = prefabs.staticShelfPrefab;
+                }
+                else {
+                    myPrefab = prefabs.shelfPrefab;
+                }
+                stockPrefab = prefabs.stockPrefab;
                 myfloorSpace = SHELFFLOORDIMENSIONS;
                 mySize = SHELFDIMENSIONS;
+                break;
+            case (UnitInfo.unitType.COUNTER):
+                myPrefab = prefabs.counterPrefab;
+                stockPrefab = prefabs.stockPrefab;
+                myfloorSpace = COUNTERDIMENSIONS;
+                mySize = COUNTERDIMENSIONS;
                 break;
         }
     }
@@ -56,6 +70,7 @@ public class Unit : MonoBehaviour {
         buttonController = stockPrefab.GetComponent<ButtonController>();
  
         unitMovement.setId(id);
+        unitMovement.myType = myType;
         unitMovement.setFloorLength(myfloorSpace[0], myfloorSpace[1]);
         unitMovement.setSize(mySize[0], mySize[1]);
         buttonController.setID(id);
@@ -75,8 +90,11 @@ public class Unit : MonoBehaviour {
     {
         unitMovement.setPending(pending);
 
-        animationController.pending = pending;
+        if(animationController != null)
+        {
+            animationController.pending = pending;
 
+        }
         stockButton = Instantiate(stockPrefab, stockButtonPosition, Quaternion.identity);
 
         unitMovement.giveStockButton(stockButton);

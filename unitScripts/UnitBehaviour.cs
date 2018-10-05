@@ -23,6 +23,7 @@ public class UnitBehaviour : MonoBehaviour {
     public float myYfloorSize;
     public bool forward;
     public UnitAnimScript unitAnimScript;
+    public UnitInfo.unitType myType;
 
     public string orientation = "forward";
 
@@ -113,30 +114,33 @@ public class UnitBehaviour : MonoBehaviour {
 
         if ((Input.GetKeyDown(KeyCode.Space) && objectGrabbed) || doAnyway)
         {
-            unitAnimScript.rotate();
-            Quaternion rot = transform.rotation;
-            float myZ = rot.eulerAngles.z;
-            myZ += 180;
-            transform.rotation = Quaternion.Euler(0, 0, myZ);
-            forward = !forward;
+            //this if is temporary until i add an animator for the counter
+            if (unitAnimScript != null)
+            {
+                unitAnimScript.rotate();
+                Quaternion rot = transform.rotation;
+                float myZ = rot.eulerAngles.z;
+                myZ += 180;
+                transform.rotation = Quaternion.Euler(0, 0, myZ);
+                forward = !forward;
+            }
         }
 
     }
 
     public void addToGrid()
     {
-        UnitPlacement.addShelfUnit(bleftx, blefty, myID, myXfloorSize, myYfloorSize, forward);
+        UnitPlacement.addUnit(bleftx, blefty, myID, myXfloorSize, myYfloorSize, forward, myType);
     }
 
     public void removeFromGrid()
     {
-        UnitPlacement.removeShelfUnit(bleftx, blefty, myXfloorSize, myYfloorSize);
+        UnitPlacement.removeUnit(bleftx, blefty, myXfloorSize, myYfloorSize);
     }
 
     protected void OnMouseOver()
     {
         mouseHover = true;
-        unitAnimScript.hover(true);
         if (!objectGrabbed && !pending)
         {
             stockButton.transform.position = new Vector3(bleftx + (3 * myXsize) / 4, blefty + (3 * myYsize) / 4, 20);
@@ -146,7 +150,6 @@ public class UnitBehaviour : MonoBehaviour {
     protected void OnMouseExit()
     {
         mouseHover = false;
-        unitAnimScript.hover(false);
         stockButton.transform.position = new Vector3(-100, -100, -100);
     }
 

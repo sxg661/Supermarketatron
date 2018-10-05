@@ -8,7 +8,7 @@ public class Item {
         HEALTHY, SWEET, EXOTIC, CONVINIENT, UNHEALTHY, FUN }
     public enum Type { FOOD, BEVERAGE, HOUSEHOLD, KIDS }
 
-    public List<Tag> tags;
+    public List<Tag> tags = new List<Tag>();
     public Type itemType;
     public string name;
     public string descrip = "";

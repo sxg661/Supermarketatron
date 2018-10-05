@@ -9,11 +9,13 @@ public class UnitAnimScript : MonoBehaviour {
     public bool mouseHover = false;
     public bool pending;
 
+    private UnitBehaviour unitBehav;
     private UnitMovement unitMovement;
     private Animator anim;
 
 	// Use this for initialization
 	public void Start () {
+        unitBehav = GetComponent<UnitBehaviour>();
         unitMovement = GetComponent<UnitMovement>();
         anim = GetComponent<Animator>();
         if (pending)
@@ -49,12 +51,16 @@ public class UnitAnimScript : MonoBehaviour {
         //once dragging I don't want hover to come off even if you go temporarily
         //outside the box
 
-        if (!unitMovement.isGrabbed() || pending)
+        if (!unitBehav.isGrabbed() || pending)
         {
             anim.SetBool("red", false);
             pending = false;
         }
-        else if (unitMovement.inGridBounds() && !unitMovement.thereIsClash())
+        else if(unitMovement == null)
+        {
+            anim.SetBool("red", false);
+        }
+        else if (unitBehav.inGridBounds() && !unitMovement.thereIsClash() )
         {
             anim.SetBool("red", false);
         }

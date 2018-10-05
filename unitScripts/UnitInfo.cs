@@ -5,7 +5,7 @@ using UnityEngine;
 public class UnitInfo
 {
     public enum unitType{
-        SHELF
+        SHELF, COUNTER
     }
 
     private int id;

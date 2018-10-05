@@ -29,6 +29,11 @@ public class TileGrid : MonoBehaviour {
         return new int[] { GRIDRANGEX[0], GRIDRANGEY[0] };
     }
 
+    public static int[] topLeftCorner()
+    {
+        return new int[] { GRIDRANGEX[0], GRIDRANGEY[1] };
+    }
+
     /// <summary>
     /// Will return a character that represents the edge of the screen has been hit and where it has a been hit
     /// </summary>
