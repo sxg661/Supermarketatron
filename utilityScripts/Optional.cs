@@ -26,7 +26,7 @@ public struct Optional<T>
     }
 
     /// <summary>
-    /// Checks if this contents has any contents
+    /// Checks if this optional has any contents
     /// </summary>
     /// <returns>True if there is contents</returns>
     public bool isPresent()

@@ -14,6 +14,17 @@ public class TileGrid : MonoBehaviour {
         return (GRIDRANGEY[1] - y);
     }
 
+    public static int getGridSize()
+    {
+        return (GRIDRANGEX[1] - GRIDRANGEX[0]) * (GRIDRANGEY[1] - GRIDRANGEY[0]);
+    }
+
+    public static bool indexInGrid(int x, int y)
+    {
+        return (x >= GRIDRANGEX[0] && x <= GRIDRANGEX[1]) &&
+            (y >= GRIDRANGEX[0] && y <= GRIDRANGEY[1]);
+    }
+
     public static bool inGridBounds(Vector2 bottomLeftPos, float xsize, float ysize)
     {
         float tileEdgex = xsize - 1;

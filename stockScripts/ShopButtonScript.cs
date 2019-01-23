@@ -33,7 +33,7 @@ public class ShopButtonScript : MonoBehaviour {
             myProduct = newItem.get();
             nameLabel.text = myProduct.name;
             iconImage.sprite = images.getImage(myProduct.name).sprite;
-            priceText.text = myProduct.wholesalePrice.ToString();
+            priceText.text = string.Format("£{0:0.00}", decimal.Parse(myProduct.wholesalePrice.ToString() )  );
         }
         else
         {

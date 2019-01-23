@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitStatic : UnitBehaviour {
-
 	
 	// Update is called once per frame
 	void Update () {
@@ -12,5 +11,7 @@ public class UnitStatic : UnitBehaviour {
             initial = false;
             rotate(true);
         }
-	}
+
+        spriteRenderer.sortingOrder = TileGrid.getSortingNum(blefty);
+    }
 }

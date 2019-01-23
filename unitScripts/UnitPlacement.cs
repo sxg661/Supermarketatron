@@ -36,9 +36,9 @@ public class UnitPlacement : MonoBehaviour
     {
         int[] coCoords = TileGrid.topLeftCorner();
         instantiateCounterUnit(coCoords[0] + 1, coCoords[1] - 2);
-        
 
-        for(int x = TileGrid.GRIDRANGEX[0]; x <= TileGrid.GRIDRANGEX[1]; x++)
+
+        for (int x = TileGrid.GRIDRANGEX[0]; x <= TileGrid.GRIDRANGEX[1]; x++)
         {
             for (int y = TileGrid.GRIDRANGEY[0]; y <= TileGrid.GRIDRANGEY[1]; y++)
             {
