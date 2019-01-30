@@ -12,9 +12,12 @@ public class RouteFollower : CustomerBehaviour {
     public direction myDirection;
     public float x;
     public float y;
+
     public int goalX;
     public int goalY;
-    public float timeUntilGoal;
+    public int startX;
+    public int startY;
+
     public int routeIndex;
     public List<int[]> route;
     public float SPEED = 0.05f;
@@ -22,6 +25,9 @@ public class RouteFollower : CustomerBehaviour {
     Transform transform;
     bool first = true;
     public SupermarketPathFinder pathFinder = new SupermarketPathFinder();
+
+    private float timeSinceLast;
+    private float timePerMove = 0.5f;
 
     public override string myType()
     {
@@ -43,6 +49,8 @@ public class RouteFollower : CustomerBehaviour {
     public override void Init(SpriteRenderer renderer, Transform tran, DoneDel doneMethod) {
         spriteRenderer = renderer;
         transform = tran;
+        x = transform.position[0];
+        y = transform.position[1];
         transform.position = new Vector2(x, y);
 
         done = doneMethod;
@@ -64,11 +72,19 @@ public class RouteFollower : CustomerBehaviour {
 
         goalX = route[0][0];
         goalY = route[0][1];
+        startX = Tile.getTile(x);
+        startY = Tile.getTile(y);
+        //Debug.Log("hey " + transform.position);
+        transform.position = new Vector2(x, y);
+        //Debug.Log("hey2 " + transform.position);
         routeIndex = 0;
         establishDirection();
+        timeSinceLast = 0;
 
         return true;
     }
+
+
 
     private void setSortingLayer()
     {
@@ -76,6 +92,8 @@ public class RouteFollower : CustomerBehaviour {
 
     }
 
+
+    //NOT CURRENTLY USED, BUT I MIGHT NEED THIS IN THE FUTURE
     private void establishDirection()
     {
         if (Tile.getPos(route[routeIndex][0],1) != x)
@@ -105,43 +123,6 @@ public class RouteFollower : CustomerBehaviour {
     }
 
 
-    public bool checkGoalReached()
-    {
-        switch (myDirection)
-        {
-            case direction.UP:
-                return y >= Tile.getPos(goalY, 1);
-            case direction.DOWN:
-                return y <= Tile.getPos(goalY, 1);
-            case direction.RIGHT:
-                return x >= Tile.getPos(goalX, 1);
-            case direction.LEFT:
-                return x <= Tile.getPos(goalX, 1);
-        }
-
-        return false;
-    }
-
-
-    public void moveInDirection(float speed)
-    {
-        switch (myDirection)
-        {
-            case direction.UP:
-                y = y + speed;
-                break;
-            case direction.DOWN:
-                y = y - speed;
-                break;
-            case direction.LEFT:
-                x = x - speed;
-                break;
-            case direction.RIGHT:
-                x = x + speed;
-                break;
-
-        }
-    }
 
 
 
@@ -149,15 +130,20 @@ public class RouteFollower : CustomerBehaviour {
      // Move the AI
     public override void Update()
     {
-        if (checkGoalReached())
+        timeSinceLast += Time.deltaTime;
+        //Debug.Log(timeSinceLast);
+;
+        if (timeSinceLast >= timePerMove)
         {
 
 
             x = Tile.getPos(goalX, 1);
             y = Tile.getPos(goalY, 1);
-            
 
-            if (finished || routeIndex == route.Count - 1)
+            transform.position = new Vector2(x, y);
+
+
+            if (routeIndex == route.Count - 1)
             {
                 done();
                 finished = true;
@@ -167,6 +153,10 @@ public class RouteFollower : CustomerBehaviour {
             routeIndex += 1;
             goalX = route[routeIndex][0];
             goalY = route[routeIndex][1];
+            startX = Tile.getTile(x);
+            startY = Tile.getTile(y);
+
+            timeSinceLast = 0;
 
             establishDirection();
             
@@ -174,12 +164,20 @@ public class RouteFollower : CustomerBehaviour {
         }
         else
         {
-            timeUntilGoal -= Time.deltaTime;
+            //moveInDirection(0.1f);
+
+            //Might change to using LERP but this is good :)
+            x = (timeSinceLast/timePerMove) * (Tile.getPos(goalX, 1) - Tile.getPos(startX, 1)) + Tile.getPos(startX, 1);
+            y = (timeSinceLast/timePerMove) * (Tile.getPos(goalY, 1) - Tile.getPos(startY, 1)) + Tile.getPos(startY, 1);
+
             setSortingLayer();
         }
 
+        Vector2 newPos = transform.position;
+        newPos.x = x;
+        newPos.y = y;
 
-        transform.position = new Vector2(x, y);
+        transform.position = newPos;
     }
 
     

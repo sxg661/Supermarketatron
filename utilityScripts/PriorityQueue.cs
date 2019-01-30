@@ -69,7 +69,7 @@ public class PriorityQueue<T>
     {
         Index returnItem = heap[0];
 
-        Debug.Log(maxOccupiedIndex);
+        //Debug.Log(maxOccupiedIndex);
         heap[0] = heap[maxOccupiedIndex--];
 
         if (maxOccupiedIndex != -1)

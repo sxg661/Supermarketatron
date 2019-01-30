@@ -13,6 +13,6 @@ public class FrameRateScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log("FR : " + 1.0f / Time.deltaTime);
+        //Debug.Log("FR : " + 1.0f / Time.deltaTime);
 	}
 }

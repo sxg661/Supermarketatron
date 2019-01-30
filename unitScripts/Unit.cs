@@ -30,7 +30,7 @@ public class Unit : MonoBehaviour {
         switch (myType)
         {
             case (UnitInfo.unitType.SHELF):
-                Debug.Log(type.ToString());
+                //Debug.Log(type.ToString());
                 if (staticUnit)
                 {
                     myPrefab = prefabs.staticShelfPrefab;

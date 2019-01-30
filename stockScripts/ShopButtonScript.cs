@@ -24,7 +24,7 @@ public class ShopButtonScript : MonoBehaviour {
     {
 
         myProdId = buttonController.getMyProdId(myButtonId);
-        Debug.Log(myProdId);
+        //Debug.Log(myProdId);
         Optional<Item> newItem = StockShop.getProd(myProdId);
 
 

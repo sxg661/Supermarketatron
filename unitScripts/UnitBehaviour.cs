@@ -36,7 +36,7 @@ public class UnitBehaviour : MonoBehaviour {
         originalLoc = transform.position;
         spriteRenderer = GetComponent<SpriteRenderer>();
         unitAnimScript = GetComponent<UnitAnimScript>();
-        Debug.Log("hey yeah woo");
+        //Debug.Log("hey yeah woo");
     }
 
     void Update()

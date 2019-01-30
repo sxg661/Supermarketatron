@@ -15,6 +15,7 @@ public class Idle : CustomerBehaviour {
     public Idle(int y)
     {
         this.y = y;
+        
     }
 
 
@@ -23,6 +24,7 @@ public class Idle : CustomerBehaviour {
     public override void Init(SpriteRenderer renderer, Transform transform, DoneDel doneMethod) {
         spriteRenderer = renderer;
         done = doneMethod;
+        setSortingLayer();
 
 
     }
@@ -42,7 +44,7 @@ public class Idle : CustomerBehaviour {
      // Move the AI
     public override void Update()
     {
-        setSortingLayer();
+        //setSortingLayer();
 
         done();
     }
