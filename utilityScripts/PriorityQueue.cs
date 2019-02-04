@@ -76,7 +76,16 @@ public class PriorityQueue<T>
             downwardHeapify(0);
 
         return returnItem.data;
+    }
 
+    public int TopPriority()
+    {
+        if (maxOccupiedIndex == -1)
+        {
+            return -1;
+        }
+
+        return heap[maxOccupiedIndex].priority;
     }
 
     private void upwardHeapify(int indexToShift)

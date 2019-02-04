@@ -10,6 +10,9 @@ public abstract class CustomerBehaviour
 
     public abstract void Update();
 
-    public abstract string myType();
+    public abstract string MyType();
+
+    public abstract void OnCollision();
+    public abstract void onCollsionEnd();
 
 }

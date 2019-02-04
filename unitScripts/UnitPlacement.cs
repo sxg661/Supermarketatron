@@ -15,6 +15,8 @@ public class UnitPlacement : MonoBehaviour
 
     private string mySceneName;
 
+    public static int[] counterLoc = new int[] { 0, 0 };
+
     private static bool unitsFrozen = false;
 
     public static void freezeUnits(bool freeze)
@@ -98,6 +100,7 @@ public class UnitPlacement : MonoBehaviour
         int id = getNewID();
         unit.initStaticComponents(id);
         unit.givePosition(blx, bly, true);
+        counterLoc = new int[] { blx, bly };
 
         //add to the dictionary
         units[id] = unit;
@@ -184,6 +187,33 @@ public class UnitPlacement : MonoBehaviour
         if (tiles.ContainsKey(keyToCheck))
             //it is allowed to collide with itself
             return tiles[keyToCheck].getID() != myID;
+
+        return false;
+    }
+
+
+    public static bool canAccessShelf(int x, int y)
+    {
+
+
+        if (tiles.ContainsKey(TileGrid.getKey(x, y + 1)))
+        {
+            if(tiles[TileGrid.getKey(x, y + 1)].forward 
+                && tiles[TileGrid.getKey(x, y + 1)].type == UnitInfo.unitType.SHELF)
+            {
+                return true;
+
+            }
+        }
+
+        if (tiles.ContainsKey(TileGrid.getKey(x, y - 1)))
+        {
+            if(!tiles[TileGrid.getKey(x, y - 1)].forward
+                && tiles[TileGrid.getKey(x, y + 1)].type == UnitInfo.unitType.SHELF)
+            {
+                return true;
+            }
+        }
 
         return false;
     }

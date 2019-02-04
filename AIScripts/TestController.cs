@@ -5,18 +5,19 @@ using UnityEngine;
 public class TestController : CustomerController
 {
 
-    bool moving = false;
-    private float time = 0.0f;
-    public float period = 0.02f;
     int x;
     int y;
-    bool done;
+    int[] goal;
+    Optional<List<int[]>> currentPath = Optional<List<int[]>>.empty();
+    public SupermarketPathFinder pathFinder = new SupermarketPathFinder();
+    List<int[]> myRoute;
+
 
     // Start is called before the first frame update
     void Start()
     {
         x = Random.Range(TileGrid.GRIDRANGEX[0], TileGrid.GRIDRANGEX[1] + 1);
-        y = Random.Range(TileGrid.GRIDRANGEY[0], TileGrid.GRIDRANGEY[0] + 1);
+        y = Random.Range(TileGrid.GRIDRANGEY[0], TileGrid.GRIDRANGEY[1] + 1);
 
         spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -25,18 +26,36 @@ public class TestController : CustomerController
     }
 
     
+
+    private void makeNewRouteFollower()
+    {
+        myBehaviour = new RouteFollower();
+        myBehaviour.Init(spriteRenderer, transform, DoneRouteFollower);
+
+
+    }
+
     protected override void DoneRouteFollower()
     {
         //int myXTile = Tile.getTile(x);
-        int[] goal = ChooseRandomGoal();
-        bool okRoute = ((RouteFollower)myBehaviour).findRoute(goal[0], goal[1]);
+        goal = ChooseRandomGoal();
+        x = Tile.getTile(transform.position.x);
+        y = Tile.getTile(transform.position.y);
+        myRoute = pathFinder.findRoute(new int[] { x, y }, goal);
+        //myRoute = pathFinder.findNearestShelf(x, y);
+        
 
-        if (!okRoute)
+        if (myRoute == null || myRoute.Count < 1)
         {
             myBehaviour = new Idle(y);
             myBehaviour.Init(spriteRenderer, transform, DoneIdle);
+            return;
         }
+        
+
+        bool okRoute = ((RouteFollower)myBehaviour).giveRoute(myRoute);
     }
+
 
 
     protected override void  DoneIdle()
@@ -45,11 +64,13 @@ public class TestController : CustomerController
         //y = Tile.getTile(transform.position[1]);
 
         //Debug.Log("Hello!!!");
-        myBehaviour = new RouteFollower();
-        myBehaviour.Init(spriteRenderer, transform, DoneRouteFollower);
+
+        makeNewRouteFollower();
+
         DoneRouteFollower();
     }
 
 
-    
+  
+
 }

@@ -15,8 +15,11 @@ public class RouteFollower : CustomerBehaviour {
 
     public int goalX;
     public int goalY;
-    public int startX;
-    public int startY;
+    public float startXPos;
+    public float startYPos;
+
+    public int myXTile;
+    public int myYTile;
 
     public int routeIndex;
     public List<int[]> route;
@@ -24,12 +27,16 @@ public class RouteFollower : CustomerBehaviour {
     SpriteRenderer spriteRenderer;
     Transform transform;
     bool first = true;
-    public SupermarketPathFinder pathFinder = new SupermarketPathFinder();
 
-    private float timeSinceLast;
-    private float timePerMove = 0.5f;
+    public float timeSinceLast = 0;
+    public float timePerMove = 0.5f;
+    public float maxSpeed = 0.5f;
+    public float minSpeed = 3f;
 
-    public override string myType()
+    public float collisionHinderanceFactor = 2;
+
+
+    public override string MyType()
     {
         return "routeFollower";
     }
@@ -40,6 +47,7 @@ public class RouteFollower : CustomerBehaviour {
         this.y = Tile.getPos(y, 1);
     }
 
+  
 
     bool finished = false;
 
@@ -55,14 +63,17 @@ public class RouteFollower : CustomerBehaviour {
 
         done = doneMethod;
 
-
     }
 
+  
 
-    public bool findRoute(int xg, int yg)
+
+    public bool giveRoute(List<int[]> route)
     {
-        
-        route = pathFinder.findRoute(new int[] { Tile.getTile(x), Tile.getTile(y) }, new int[] { xg, yg });
+
+        //route = pathFinder.findRoute(new int[] { Tile.getTile(x), Tile.getTile(y) }, new int[] { xg, yg });
+
+        this.route = route;
 
         if (route == null || route.Count < 1)
         {
@@ -70,10 +81,13 @@ public class RouteFollower : CustomerBehaviour {
             return false;
         }
 
+        //otherwise we can now clear our avoid square because we have our route
+        //pathFinder.clearAvoidSquare();
+
         goalX = route[0][0];
         goalY = route[0][1];
-        startX = Tile.getTile(x);
-        startY = Tile.getTile(y);
+        startXPos = x;
+        startYPos = y;
         //Debug.Log("hey " + transform.position);
         transform.position = new Vector2(x, y);
         //Debug.Log("hey2 " + transform.position);
@@ -91,7 +105,6 @@ public class RouteFollower : CustomerBehaviour {
         spriteRenderer.sortingOrder = TileGrid.getSortingNum(Tile.getTile(y));
 
     }
-
 
     //NOT CURRENTLY USED, BUT I MIGHT NEED THIS IN THE FUTURE
     private void establishDirection()
@@ -122,10 +135,23 @@ public class RouteFollower : CustomerBehaviour {
         }
     }
 
+    public override void OnCollision()
+    {
+        //backtrack(startX, startY, timeSinceLast);
+        float newTimePerMove = Mathf.Clamp(timePerMove * collisionHinderanceFactor, maxSpeed, minSpeed);
+        float factor = newTimePerMove / timePerMove;
+        timePerMove = newTimePerMove;
+        timeSinceLast = timeSinceLast * factor;
+    }
 
-
-
-
+    public override void onCollsionEnd()
+    {
+        float newTimePerMove = Mathf.Clamp(timePerMove / collisionHinderanceFactor, maxSpeed , minSpeed);
+        float factor = timePerMove / newTimePerMove;
+        timePerMove = newTimePerMove;
+        timeSinceLast = timeSinceLast / factor;
+        return;
+    }
 
      // Move the AI
     public override void Update()
@@ -153,8 +179,8 @@ public class RouteFollower : CustomerBehaviour {
             routeIndex += 1;
             goalX = route[routeIndex][0];
             goalY = route[routeIndex][1];
-            startX = Tile.getTile(x);
-            startY = Tile.getTile(y);
+            startXPos = x;
+            startYPos = y;
 
             timeSinceLast = 0;
 
@@ -167,8 +193,8 @@ public class RouteFollower : CustomerBehaviour {
             //moveInDirection(0.1f);
 
             //Might change to using LERP but this is good :)
-            x = (timeSinceLast/timePerMove) * (Tile.getPos(goalX, 1) - Tile.getPos(startX, 1)) + Tile.getPos(startX, 1);
-            y = (timeSinceLast/timePerMove) * (Tile.getPos(goalY, 1) - Tile.getPos(startY, 1)) + Tile.getPos(startY, 1);
+            x = (timeSinceLast / timePerMove) * (Tile.getPos(goalX, 1) - startXPos) + startXPos;
+            y = (timeSinceLast / timePerMove) * (Tile.getPos(goalY, 1) - startYPos) + startYPos;
 
             setSortingLayer();
         }
@@ -178,7 +204,11 @@ public class RouteFollower : CustomerBehaviour {
         newPos.y = y;
 
         transform.position = newPos;
+
+        //checkForCollisions();
+ 
     }
+
 
     
 }

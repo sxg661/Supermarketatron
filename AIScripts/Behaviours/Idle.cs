@@ -7,7 +7,7 @@ public class Idle : CustomerBehaviour {
     SpriteRenderer spriteRenderer;
     int y;
 
-    public override string myType()
+    public override string MyType()
     {
         return "idle";
     }
@@ -36,11 +36,6 @@ public class Idle : CustomerBehaviour {
 
     }
 
-
-
-
-
-
      // Move the AI
     public override void Update()
     {
@@ -49,6 +44,14 @@ public class Idle : CustomerBehaviour {
         done();
     }
 
-    
+    public override void OnCollision()
+    {
+        return;
+    }
+
+    public override void onCollsionEnd()
+    {
+        return;
+    }
 }
 

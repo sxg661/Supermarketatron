@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class CustomerController : MonoBehaviour {
 
+
+
+
     protected CustomerBehaviour myBehaviour;
     protected SpriteRenderer spriteRenderer;
    
@@ -18,12 +21,11 @@ public abstract class CustomerController : MonoBehaviour {
         return goal;
     }
 
-
-
     protected abstract void DoneRouteFollower();
 
-
     protected abstract void DoneIdle();
+
+  
 
     void FixedUpdate()
     {
@@ -33,6 +35,22 @@ public abstract class CustomerController : MonoBehaviour {
         }
 
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D trigger)
+    {
+        if (myBehaviour != null && trigger.gameObject.tag == "AI")
+        {
+            myBehaviour.OnCollision();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D trigger)
+    {
+        if (myBehaviour != null && trigger.gameObject.tag == "AI")
+        {
+            myBehaviour.onCollsionEnd();
+        }
     }
 
 

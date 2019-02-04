@@ -11,7 +11,6 @@ public class SupermarketPathFinder {
 
     private HashSet<String> visitedTiles = new HashSet<string>();
 
-    
 
 
     private class Tile
@@ -27,6 +26,7 @@ public class SupermarketPathFinder {
             previous = prev;
         }
     }
+
 
     private int heuristic(int[] start, int[] end)
     {
@@ -45,8 +45,9 @@ public class SupermarketPathFinder {
 
     private bool checkFree(int x, int y)
     {
+    
         return TileGrid.indexInGrid(x, y) &&
-            !UnitPlacement.occupied(x, y, -1);
+           !UnitPlacement.occupied(x, y, -1);
     }
 
     /// <summary>
@@ -70,6 +71,7 @@ public class SupermarketPathFinder {
     /// returns null if no route is found
     /// this is some kind of incomplete A* algorithm (don't really want to find the
     /// abosolute quickest route)
+    /// It's a greedy search
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
@@ -83,6 +85,7 @@ public class SupermarketPathFinder {
         }
         
         PriorityQueue<Tile> tilesToSearch = new PriorityQueue<Tile>(TileGrid.getGridSize() + 5);
+        visitedTiles = new HashSet<string>();
 
         tilesToSearch.add(new Tile(Optional<Tile>.empty(), start[0], start[1])
             , heuristic(start, end));
@@ -92,7 +95,9 @@ public class SupermarketPathFinder {
         {
             Tile currentTile = tilesToSearch.take();
 
-            if(currentTile.x == end[0] && currentTile.y == end[1])
+            visitedTiles.Add(TileGrid.getKey(currentTile.x, currentTile.y));
+
+            if (currentTile.x == end[0] && currentTile.y == end[1])
             {
                 return traceBackRoute(currentTile);
             }
@@ -104,7 +109,40 @@ public class SupermarketPathFinder {
                     int aproxDist = heuristic(tile, end);
                     Tile newTile = new Tile(Optional<Tile>.of(currentTile), tile[0], tile[1]);
                     tilesToSearch.add(newTile, aproxDist);
-                    visitedTiles.Add(TileGrid.getKey(tile[0], tile[1]));
+                    
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+
+    public List<int[]> findNearestShelf(int startX, int startY)
+    {
+        PriorityQueue<Tile> tilesToSearch = new PriorityQueue<Tile>(TileGrid.getGridSize() + 5);
+        visitedTiles = new HashSet<string>();
+        tilesToSearch.add(new Tile(Optional<Tile>.empty(), startX, startY), 0);
+        
+
+        while (tilesToSearch.hasElements())
+        {
+            int currentDist = tilesToSearch.TopPriority();
+            Tile currentTile = tilesToSearch.take();
+
+            visitedTiles.Add(TileGrid.getKey(currentTile.x, currentTile.y));
+
+            if(UnitPlacement.canAccessShelf(currentTile.x, currentTile.y))
+            {
+                return traceBackRoute(currentTile);
+            }
+
+            foreach(int[] tile in getAdjIndexes(currentTile.x, currentTile.y))
+            {
+                if(checkFree(tile[0], tile[1]) && !visitedTiles.Contains(TileGrid.getKey(tile[0], tile[1])))
+                {
+                    tilesToSearch.add(new Tile(Optional<Tile>.of(currentTile), tile[0], tile[1]), currentDist - 1);
                 }
             }
         }
