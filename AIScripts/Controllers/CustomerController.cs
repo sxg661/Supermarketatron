@@ -20,11 +20,6 @@ public abstract class CustomerController : MonoBehaviour {
         goal[1] = Random.Range(TileGrid.GRIDRANGEY[0], TileGrid.GRIDRANGEY[1] + 1);
         return goal;
     }
-
-    protected abstract void DoneRouteFollower();
-
-    protected abstract void DoneIdle();
-
   
 
     void FixedUpdate()

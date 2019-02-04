@@ -100,7 +100,7 @@ public class UnitPlacement : MonoBehaviour
         int id = getNewID();
         unit.initStaticComponents(id);
         unit.givePosition(blx, bly, true);
-        counterLoc = new int[] { blx, bly };
+        counterLoc = new int[] { blx, bly - 1 };
 
         //add to the dictionary
         units[id] = unit;

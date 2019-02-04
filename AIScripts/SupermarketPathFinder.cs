@@ -95,8 +95,6 @@ public class SupermarketPathFinder {
         {
             Tile currentTile = tilesToSearch.take();
 
-            visitedTiles.Add(TileGrid.getKey(currentTile.x, currentTile.y));
-
             if (currentTile.x == end[0] && currentTile.y == end[1])
             {
                 return traceBackRoute(currentTile);
@@ -109,7 +107,8 @@ public class SupermarketPathFinder {
                     int aproxDist = heuristic(tile, end);
                     Tile newTile = new Tile(Optional<Tile>.of(currentTile), tile[0], tile[1]);
                     tilesToSearch.add(newTile, aproxDist);
-                    
+                    visitedTiles.Add(TileGrid.getKey(tile[0], tile[1]));
+
                 }
             }
         }
@@ -119,9 +118,15 @@ public class SupermarketPathFinder {
 
 
 
-    public List<int[]> findNearestShelf(int startX, int startY)
+    /// <summary>
+    /// Finds a shelf near to the location passed in.
+    /// </summary>
+    /// <param name="startX"></param>
+    /// <param name="startY"></param>
+    /// <returns></returns>
+    public List<int[]> FindShelf(int startX, int startY)
     {
-        PriorityQueue<Tile> tilesToSearch = new PriorityQueue<Tile>(TileGrid.getGridSize() + 5);
+        PriorityQueue<Tile> tilesToSearch = new PriorityQueue<Tile>(TileGrid.getGridSize() * 4);
         visitedTiles = new HashSet<string>();
         tilesToSearch.add(new Tile(Optional<Tile>.empty(), startX, startY), 0);
         
@@ -133,7 +138,7 @@ public class SupermarketPathFinder {
 
             visitedTiles.Add(TileGrid.getKey(currentTile.x, currentTile.y));
 
-            if(UnitPlacement.canAccessShelf(currentTile.x, currentTile.y))
+            if (UnitPlacement.canAccessShelf(currentTile.x, currentTile.y) && UnityEngine.Random.Range(0, 5) == 0)
             {
                 return traceBackRoute(currentTile);
             }

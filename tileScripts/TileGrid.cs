@@ -9,6 +9,11 @@ public class TileGrid : MonoBehaviour {
 
     public GameObject tilePrefab;
 
+    public static int[] getDoorLoc()
+    {
+        return new int[] { GRIDRANGEX[1], GRIDRANGEY[1] };
+    }
+
     public static int getSortingNum(int y)
     {
         return (GRIDRANGEY[1] - y);
