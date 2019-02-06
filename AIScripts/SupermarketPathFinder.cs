@@ -70,7 +70,7 @@ public class SupermarketPathFinder {
     /// <summary>
     /// returns null if no route is found
     /// this is some kind of incomplete A* algorithm (don't really want to find the
-    /// abosolute quickest route)
+    /// abosolute quickest route) Greedy search!
     /// It's a greedy search
     /// </summary>
     /// <param name="start"></param>

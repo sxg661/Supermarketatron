@@ -209,7 +209,7 @@ public class UnitPlacement : MonoBehaviour
         if (tiles.ContainsKey(TileGrid.getKey(x, y - 1)))
         {
             if(!tiles[TileGrid.getKey(x, y - 1)].forward
-                && tiles[TileGrid.getKey(x, y + 1)].type == UnitInfo.unitType.SHELF)
+                && tiles[TileGrid.getKey(x, y - 1)].type == UnitInfo.unitType.SHELF)
             {
                 return true;
             }

@@ -10,8 +10,11 @@ public class CustomerSpawner : MonoBehaviour {
 
     public GameObject customerPrefab;
 
-    //higher means less probable
-    private int probOfCust = 200;
+    //approximate time between customer spawns
+    private int probOfCust = 3;
+
+    private float timeSinceLast = 0f;
+    private float timePerSpawn = 1f;
 
     public void removeCustomer()
     {
@@ -24,12 +27,26 @@ public class CustomerSpawner : MonoBehaviour {
 	void Start () {
         int[] ent = TileGrid.getDoorLoc();
         entrance = new Vector3(Tile.getPos(ent[0],1), Tile.getPos(ent[1],1), 0);
-
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if(numCustomers < capacity && Random.Range(0,probOfCust) == 0)
+	void FixedUpdate () {
+
+        timeSinceLast += Time.deltaTime;
+
+        if(timeSinceLast < timePerSpawn)
+        {
+            return;
+        }
+
+        timeSinceLast = 0;
+
+        if (Random.Range(0, probOfCust) != 0)
+        {
+            return;
+        }
+
+		if(numCustomers < capacity)
         {
             GameObject newCust = Instantiate(customerPrefab, entrance, Quaternion.identity);
             CasualCustomer custControl = newCust.GetComponent<CasualCustomer>();
