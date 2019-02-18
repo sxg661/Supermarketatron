@@ -14,4 +14,9 @@ public class UnitStatic : UnitBehaviour {
 
         spriteRenderer.sortingOrder = TileGrid.getSortingNum(blefty);
     }
+
+    public new bool isGrabbed()
+    {
+        return false;
+    }
 }

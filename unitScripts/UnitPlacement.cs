@@ -7,7 +7,11 @@ public class UnitPlacement : MonoBehaviour
 {
 
     private static Dictionary<string, UnitInfo> tiles = new Dictionary<string, UnitInfo>();
-    private static Dictionary<int, Unit> units = new Dictionary<int, Unit>();
+    private static Dictionary<int, UnitBehaviour> units = new Dictionary<int, UnitBehaviour>();
+
+    public static int[] SHELFDIMENSIONS = new int[] { 2, 1 };
+    public static int[] SHELFFLOORDIMENSIONS = new int[] { 2, 1 };
+    public static int[] COUNTERDIMENSIONS = new int[] { 4, 2 };
 
     public UnitPrefabs unitPrefabs;
 
@@ -36,9 +40,10 @@ public class UnitPlacement : MonoBehaviour
 
     public void initialiseUnits(bool staticUnit)
     {
+        //Debug.Log("i am called");
         int[] coCoords = TileGrid.topLeftCorner();
-        instantiateCounterUnit(coCoords[0] + 1, coCoords[1] - 2);
-
+        //InstantiateCounterUnit(coCoords[0] + 1, coCoords[1] - 2);
+        counterLoc = TileGrid.topLeftCorner();
 
         for (int x = TileGrid.GRIDRANGEX[0]; x <= TileGrid.GRIDRANGEX[1]; x++)
         {
@@ -46,13 +51,16 @@ public class UnitPlacement : MonoBehaviour
             {
                 if (tiles.ContainsKey(TileGrid.getKey(x, y)))
                 {
+                    //Debug.Log("there is a thing here");
                     UnitInfo currentTile = tiles[TileGrid.getKey(x, y)];
                     if(currentTile.innerX == 0 && currentTile.innerY == 0)
                     {
-                        switch(currentTile.type)
+                        //Debug.Log("and here!");
+                        switch (currentTile.type)
                         {
                             case UnitInfo.unitType.SHELF:
-                                instantiateShelfUnit(x, y, false, currentTile.forward, staticUnit);
+                                //Debug.Log("render");
+                                InstantiateShelfUnit(x, y, staticUnit, currentTile.forward, false);
                                 break;
                         }
                     }
@@ -60,39 +68,76 @@ public class UnitPlacement : MonoBehaviour
             }
         }
     }
+   
 
-    public void instantiateShelfUnit(int blx, int bly, bool pending, bool forward, bool staticUnit)
-	{
-        Unit unit = gameObject.AddComponent<Unit>();
-
-        //for now I only have shelves, but I'll change this when I get there
-        unit.giveType(UnitInfo.unitType.SHELF, unitPrefabs, staticUnit);
+    public void InstantiateShelfUnit(int blx, int bly, bool isStatic, bool forward, bool grabbed)
+    {
+        //get an ID for our new shelf
         int id = getNewID();
-        if (staticUnit)
+
+        //make a stock button for the shelf
+        GameObject stockButton = Instantiate(unitPrefabs.stockPrefab, new Vector3(-100, -100, -100), Quaternion.identity);
+
+
+        //make out new shelf using the right prefab and get the appropriate movement component
+        Vector3 shelfPos = new Vector3(
+                Tile.getPos(blx, SHELFDIMENSIONS[0]), Tile.getPos(bly, SHELFDIMENSIONS[1]), 0);
+
+        UnitBehaviour movement;
+        GameObject shelf;
+
+        if (!isStatic)
         {
-            unit.initStaticComponents(id);
+            shelf = Instantiate(unitPrefabs.shelfPrefab, shelfPos, Quaternion.identity);
+            movement = shelf.GetComponent<UnitMovement>();
+
         }
         else
         {
-            unit.initMovingComponents(id);
+            shelf = Instantiate(unitPrefabs.staticShelfPrefab, shelfPos, Quaternion.identity);
+            movement = shelf.GetComponent<UnitStatic>();
         }
-            
-        //HERE
-        unit.givePosition(blx, bly, forward);
+   
 
-        //we add this to our dictionary so we can destroy it later if need be
-        units[id] = unit;
-        //maybe need to change how I do this too, so can generalise function for all unit types
-        if(!pending)
+        //get the controller of the stock button
+        ButtonController buttonController = stockButton.GetComponent<ButtonController>();
+
+
+        //set all relevant parametres for this shelf
+        movement.setId(id);
+        movement.bleftx = blx;
+        movement.blefty = bly;
+        movement.myType = UnitInfo.unitType.SHELF;
+        movement.setFloorLength(SHELFFLOORDIMENSIONS[0], SHELFFLOORDIMENSIONS[1]);
+        movement.setSize(SHELFDIMENSIONS[0], SHELFDIMENSIONS[1]);
+        movement.forward = forward;
+        buttonController.setID(id);
+
+        //give the movment it's stock button
+        movement.giveStockButton(stockButton);
+
+        //if it is grabbed we say the shelf is grabbed so it follows the cursor 
+        //otherwise we add it in the grid so it cannot be overriden
+        if (grabbed)
+        {
+            movement.grab();
+           
+        }
+        else
+        {
             addUnit(
-                blx, bly, id, Unit.SHELFFLOORDIMENSIONS[0], Unit.SHELFFLOORDIMENSIONS[1], 
-                forward, UnitInfo.unitType.SHELF);
+                   blx, bly, id, SHELFFLOORDIMENSIONS[0], SHELFFLOORDIMENSIONS[1],
+                   forward, UnitInfo.unitType.SHELF);
+        }
 
-        unit.render(pending);
+        //put this in the dictionary so it can later be destroyed? may be redunant and can just do this from object movement?
+        units[id] = movement;
 
     }
 
-    public void instantiateCounterUnit(int blx, int bly)
+
+    /*
+    public void  instantiateCounterUnit()
     {
         //instantiate unit
         Unit unit = gameObject.AddComponent<Unit>();
@@ -106,11 +151,10 @@ public class UnitPlacement : MonoBehaviour
         units[id] = unit;
         //now do the rest
         addUnit(
-            blx, bly, id, Unit.COUNTERDIMENSIONS[0], Unit.COUNTERDIMENSIONS[1], 
+            blx, bly, id, Unit.COUNTERDIMENSIONS[0], Unit.COUNTERDIMENSIONS[1],
             true, UnitInfo.unitType.COUNTER);
         unit.render(false);
-      
-    }
+    }*/
 
     public void Start()
     {

@@ -16,6 +16,6 @@ public class UnitSpawner : MonoBehaviour {
     public void spawnUnit()
     {
         int[] spawnPos = TileGrid.lowerLeftCorner();
-        unitPlacement.instantiateShelfUnit(spawnPos[0], spawnPos[1], true, true, false);
+        unitPlacement.InstantiateShelfUnit(spawnPos[0], spawnPos[1], false, true, true);
     }
 }

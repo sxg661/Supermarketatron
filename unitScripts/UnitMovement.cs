@@ -42,7 +42,7 @@ public class UnitMovement : UnitBehaviour {
                 if (!inGridBounds() || thereIsClash())
                 {
                     //transform.position = originalLoc;
-                    Debug.Log("There is clash");
+                    //Debug.Log("There is clash");
 
                 }
                 else
@@ -57,7 +57,6 @@ public class UnitMovement : UnitBehaviour {
                     addToGrid();
 
                     originalLoc = transform.position;
-                    pending = false;
                     objectGrabbed = false;
                 }
 
@@ -82,7 +81,7 @@ public class UnitMovement : UnitBehaviour {
     /// </summary>
     private void snapToMousePosition()
     {
-        if (objectGrabbed || pending)
+        if (objectGrabbed)
         {
             ///I want to snap to the tile that mouse in in
             ///rather than just follow the mouse
@@ -132,7 +131,7 @@ public class UnitMovement : UnitBehaviour {
     {
         mouseHover = true;
         unitAnimScript.hover(true);
-        if (!objectGrabbed && !pending)
+        if (!objectGrabbed)
         {
             stockButton.transform.position = new Vector3(bleftx + (3 * myXsize) / 4, blefty + (3 * myYsize) / 4, 20);
         }

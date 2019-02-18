@@ -9,24 +9,29 @@ public class CasualCustomer : CustomerController
     int y;
     int shelvesVisited = 0;
     public CustomerSpawner spawner;
+    RouteFollower myRouteFollower;
     bool exit;
     int[] goal;
     Optional<List<int[]>> currentPath = Optional<List<int[]>>.empty();
     public SupermarketPathFinder pathFinder = new SupermarketPathFinder();
     List<int[]> myRoute;
+    int maxShelfVisits = 4;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-        x = Random.Range(TileGrid.GRIDRANGEX[0], TileGrid.GRIDRANGEX[1] + 1);
-        y = Random.Range(TileGrid.GRIDRANGEY[0], TileGrid.GRIDRANGEY[1] + 1);
+        
+        //x = Random.Range(TileGrid.GRIDRANGEX[0], TileGrid.GRIDRANGEX[1] + 1);
+        //y = Random.Range(TileGrid.GRIDRANGEY[0], TileGrid.GRIDRANGEY[1] + 1);
 
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        myBehaviour = new Idle(y);
-        myBehaviour.Init(spriteRenderer, transform, DoneIdle);
+        myRouteFollower = new RouteFollower();
+        myRouteFollower.Init(spriteRenderer, transform, DoneRouteFollower);
+
+        goToNearestShelf();
     }
 
     private void setPos()
@@ -35,14 +40,6 @@ public class CasualCustomer : CustomerController
         y = Tile.getTile(transform.position.y);
     }
 
-
-    private void makeNewRouteFollower()
-    {
-        myBehaviour = new RouteFollower();
-        myBehaviour.Init(spriteRenderer, transform, DoneRouteFollower);
-
-
-    }
 
 
     private void goToRandomLoc()
@@ -54,43 +51,44 @@ public class CasualCustomer : CustomerController
 
         myBehaviour.done = DoneRouteFollower;
 
-        checkRouteValid();
+        giveRoute();
     }
 
 
     private void goToNearestShelf()
     {
+        myBehaviour = myRouteFollower;
         setPos();
 
         myRoute = pathFinder.FindShelf(x, y);
         myBehaviour.done = DoneFindShelf;
 
-        checkRouteValid();
+        giveRoute();
     }
 
     
 
     private void GoToCounter()
     {
-        makeNewRouteFollower();
+        myBehaviour = myRouteFollower;
         setPos();
         myRoute = pathFinder.findRoute(new int[] { x, y }, UnitPlacement.counterLoc);
         
         myBehaviour.done = DoneFindShelf;
         exit = true;
 
-        checkRouteValid();
+        giveRoute();
     }
 
     private void GoToExit()
     {
-        makeNewRouteFollower();
+        myBehaviour = myRouteFollower;
         setPos();
         myRoute = pathFinder.findRoute(new int[] { x, y }, TileGrid.getDoorLoc());
 
         myBehaviour.done = LeaveSupermarket;
 
-        checkRouteValid();
+        giveRoute();
 
     }
 
@@ -104,7 +102,7 @@ public class CasualCustomer : CustomerController
     }
 
 
-    private void checkRouteValid()
+    private void giveRoute()
     {
         if (myRoute == null || myRoute.Count < 1)
         {
@@ -113,8 +111,15 @@ public class CasualCustomer : CustomerController
             return;
         }
 
-        bool okRoute = ((RouteFollower)myBehaviour).giveRoute(myRoute);
+        ((RouteFollower)myBehaviour).giveRoute(myRoute);
     }
+
+
+
+
+
+    //VVV ----------------- HERE ARE THE STATE TRANSITIONS -------------------------------------------------------------------------- VVV
+
 
     protected void DoneFindShelf()
     {
@@ -130,6 +135,7 @@ public class CasualCustomer : CustomerController
     }
 
 
+
     protected void DoneRouteFollower()
     {
         goToNearestShelf();
@@ -139,9 +145,9 @@ public class CasualCustomer : CustomerController
     protected void DoneWait()
     {
 
-        makeNewRouteFollower();
+        myBehaviour = myRouteFollower;
 
-        if (shelvesVisited >= 3)
+        if (shelvesVisited >= maxShelfVisits)
         {
             GoToCounter();
         }
@@ -161,9 +167,9 @@ public class CasualCustomer : CustomerController
 
         //Debug.Log("Hello!!!");
 
-        makeNewRouteFollower();
+        myBehaviour = myRouteFollower;
 
-        if(shelvesVisited >= 3)
+        if (shelvesVisited >= maxShelfVisits)
         {
             GoToExit();
         }

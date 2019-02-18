@@ -18,6 +18,7 @@ public class ProductImages : MonoBehaviour
     public Image candle;
     public Image pizza;
     public Image nuts;
+    public Image baseballbat;
 
     // Use this for initialization
     void Start()
@@ -31,6 +32,7 @@ public class ProductImages : MonoBehaviour
         images["candle"] = candle;
         images["pizza"] = pizza;
         images["nuts"] = nuts;
+        images["baseball bat"] = baseballbat;
     }
 
     public Image getImage(string productName)

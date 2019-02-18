@@ -6,7 +6,7 @@ public class Item {
 
     public enum Tag { FANCY, TACKY, CHEAP, EVERYDAY, VEGETERIAN,
         HEALTHY, SWEET, EXOTIC, CONVINIENT, UNHEALTHY, FUN }
-    public enum Type { FOOD, BEVERAGE, HOUSEHOLD, KIDS }
+    public enum Type { FOOD, BEVERAGE, HOUSEHOLD, KIDS, SPORTING, ELECTRONIC, CLOTHING}
 
     public List<Tag> tags = new List<Tag>();
     public Type itemType;

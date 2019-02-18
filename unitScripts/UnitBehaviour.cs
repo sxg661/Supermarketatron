@@ -14,7 +14,6 @@ public class UnitBehaviour : MonoBehaviour {
     public Vector2 originalLoc;
     public int bleftx, blefty;
     public int myID;
-    public bool pending;
     public GameObject stockButton;
     public SpriteRenderer spriteRenderer;
     public float myXsize;
@@ -30,13 +29,11 @@ public class UnitBehaviour : MonoBehaviour {
     // Use this for initialization
     protected void Start()
     { 
-        objectGrabbed = pending;
         mouseHover = false;
         initial = true;
         originalLoc = transform.position;
         spriteRenderer = GetComponent<SpriteRenderer>();
         unitAnimScript = GetComponent<UnitAnimScript>();
-        //Debug.Log("hey yeah woo");
     }
 
     void Update()
@@ -59,6 +56,11 @@ public class UnitBehaviour : MonoBehaviour {
     public bool isGrabbed()
     {
         return objectGrabbed;
+    }
+    
+    public void grab()
+    {
+        objectGrabbed = true;
     }
 
     public bool isHovered()
@@ -97,13 +99,6 @@ public class UnitBehaviour : MonoBehaviour {
         stockButton.transform.position = new Vector3(-100, -100, -100);
     }
 
-    public void setPending(bool pending)
-    {
-        //if a unit is pending it has not yet been purchased,so will come out of existance
-        //if placed in an invalid square
-        this.pending = pending;
-        BuildController.pickUp(myID);
-    }
 
 
     /// <summary>
@@ -133,6 +128,11 @@ public class UnitBehaviour : MonoBehaviour {
         UnitPlacement.addUnit(bleftx, blefty, myID, myXfloorSize, myYfloorSize, forward, myType);
     }
 
+    public void destroyMe()
+    {
+        Destroy(gameObject);
+    }
+
     public void removeFromGrid()
     {
         UnitPlacement.removeUnit(bleftx, blefty, myXfloorSize, myYfloorSize);
@@ -141,7 +141,7 @@ public class UnitBehaviour : MonoBehaviour {
     protected void OnMouseOver()
     {
         mouseHover = true;
-        if (!objectGrabbed && !pending)
+        if (!objectGrabbed)
         {
             stockButton.transform.position = new Vector3(bleftx + (3 * myXsize) / 4, blefty + (3 * myYsize) / 4, 20);
         }

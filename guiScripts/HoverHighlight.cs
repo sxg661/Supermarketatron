@@ -14,7 +14,7 @@ public class HoverHighlight : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        anim.SetBool("hover", hover);
+        //anim.SetBool("hover", hover);
 	}
 
     private void OnMouseOver()

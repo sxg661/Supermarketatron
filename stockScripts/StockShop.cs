@@ -109,6 +109,14 @@ public class StockShop : MonoBehaviour {
         pizza.addTag(Item.Tag.FUN);
         addProd("pizza", pizza, prods);
 
+        //Baseball bat
+        Item baseballBat = new Item(Item.Type.SPORTING, "baseball bat", 56, 1.5);
+        baseballBat.descrip = "Doesn't fly -- makes balls fly";
+        baseballBat.addTag(Item.Tag.FUN);
+        baseballBat.addTag(Item.Tag.HEALTHY);
+        addProd("baseball bat", baseballBat, prods);
+
+
         return prods;
     }
 
